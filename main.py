@@ -27,7 +27,7 @@ async def ping(ctx):
     await ctx.send("WIP\nPong! :ping_pong:")
 
 
-@bot.command()
+@bot.command(aliases = ["r", "rolls"])
 async def roll(ctx, *, d):
     diceRegex = re.compile(r"^(\d*)d(\d+)((-|\+)\d+)?$", re.IGNORECASE)
     dado = diceRegex.search(d)
@@ -64,7 +64,8 @@ async def prefix(ctx, prefix):
 
 @bot.command()
 async def svinfo(ctx):
-    await ctx.send(f"""WIP""")
+    await ctx.send(f"""WIP
+{ctx.guild.id}""")
 
 
 @bot.command()
