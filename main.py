@@ -29,29 +29,35 @@ async def ping(ctx):
 
 @bot.command(aliases = ["r", "rolls"])
 async def roll(ctx, *, d):
-    diceRegex = re.compile(r"^(\d*)d(\d+)((-|\+)\d+)?$", re.IGNORECASE)
-    dado = diceRegex.search(d)
+    diceRegex = re.compile(r"(\d*)d(\d+)((-|\+)\d+)?", re.IGNORECASE)
+    dados = diceRegex.findall(d)
 
-    colorRange = {0: 0xee0000, 1: 0xee2800, 2: 0xee5900, 3: 0xee8b00, 4: 0xeebc00, 5: 0xeeee00, 6: 0xcaf300, 7: 0xa2f800, 8: 0x77fc00, 9: 0x49ff00, 10: 0x18ff00} 
+    # colorRange = {0: 0xee0000, 1: 0xee2800, 2: 0xee5900, 3: 0xee8b00, 4: 0xeebc00, 5: 0xeeee00, 6: 0xcaf300, 7: 0xa2f800, 8: 0x77fc00, 9: 0x49ff00, 10: 0x18ff00} 
     
-    numDados = int(dado[1]) if dado[1] else 1
-    numLados = int(dado[2])
-    numRodadas = [randint(1, numLados) for i in range(numDados)]
+    embedVar = discord.Embed(title=":game_die: Rolando Dados :game_die: ", color=0x000000)
 
-    valor = (sum(numRodadas) * 10) / (numDados * numLados)
+    for dado in dados:
+        numDados = int(dado[0]) if dado[0] else 1
+        numLados = int(dado[1]) if dado[1] else 1
+        numRodadas = [randint(1, numLados) for i in range(numDados)]
 
-    name = f"[{numDados}d{numLados} {sorted(numRodadas)} "
-    total = f"{sum(numRodadas)}"
-   
-    if dado[3]:
-        modificador = [i if i not in "+-" else f"{i} " for i in dado[3]]
-        name += "".join(modificador)
-        total += str(dado[3])
+        # valor = (sum(numRodadas) * 10) / (numDados * numLados)
 
-    cor = colorRange[round(valor)]
+        name = f"[{numDados}d{numLados}] {sorted(numRodadas)} "
+        total = f"{sum(numRodadas)}"
+    
+        if dado[2]:
+            modificador = [i if i not in "+-" else f"{i} " for i in dado[2]]
+            name += "".join(modificador)
+            total += str(dado[2])
 
-    embedVar = discord.Embed(title=":game_die: Rolando Dados :game_die: ", color=cor)
-    embedVar.add_field(name = name, value = f"O resultado final foi: {eval(total)}", inline=False)
+    
+        # if len(dados) == 1:
+        #     cor = colorRange[round(valor)]
+        # else:
+        #     cor = 0x000000
+
+        embedVar.add_field(name = name, value = f"O resultado final foi: {eval(total)}", inline=False)
     
     await ctx.send(embed = embedVar)
 
